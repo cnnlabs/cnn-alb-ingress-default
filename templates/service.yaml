@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.namespace }}-backend-nodeport
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ include "alb-ingress-default.name" . }}
+    chart: {{ include "alb-ingress-default.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      protocol: TCP
+      name: 8080tcp1
+      targetPort: {{ .Values.service.port }}
+  selector:
+    workload.user.cattle.io/workloadselector: deployment-{{ .Values.namespace }}-backend

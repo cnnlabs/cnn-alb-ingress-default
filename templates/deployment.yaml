@@ -1,0 +1,55 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Values.namespace }}-backend
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ include "alb-ingress-default.name" . }}
+    chart: {{ include "alb-ingress-default.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    workload.user.cattle.io/workloadselector: deployment-{{ .Values.namespace }}-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "alb-ingress-default.name" . }}
+      release: {{ .Release.Name }}
+      workload.user.cattle.io/workloadselector: deployment-{{ .Values.namespace }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ include "alb-ingress-default.name" . }}
+        release: {{ .Release.Name }}
+        workload.user.cattle.io/workloadselector: deployment-{{ .Values.namespace }}-backend
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
