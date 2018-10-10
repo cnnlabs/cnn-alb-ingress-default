@@ -8,6 +8,8 @@ metadata:
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+  annotations:
+    field.cattle.io/targetWorkloadIds: "[\"deployment:{{ .Values.namespace }}:{{ .Values.namespace }}-backend\"]"
 spec:
   type: {{ .Values.service.type }}
   ports:
