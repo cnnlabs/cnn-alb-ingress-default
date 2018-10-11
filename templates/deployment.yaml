@@ -8,6 +8,7 @@ metadata:
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    logzio: {{ .Values.logzio }}
     workload.user.cattle.io/workloadselector: deployment-{{ .Values.namespace }}-backend
 spec:
   replicas: 1
