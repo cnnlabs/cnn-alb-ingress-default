@@ -13,7 +13,7 @@ metadata:
     alb.ingress.kubernetes.io/security-groups: news-prod-dx_external
     alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ .Values.namespace }}-shared
     alb.ingress.kubernetes.io/listen-ports: "[{\"HTTPS\": 443, \"HTTP\": 80}]"
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:175259281135:certificate/4eb3e302-b071-44ff-94a3-7d9e28f8a325
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.certArn }}
   labels:
     app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
