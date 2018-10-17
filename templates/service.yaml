@@ -1,12 +1,12 @@
-{{- required "`project` not set" .Values.project -}}
-{{- required "`environment` not set" .Values.environment -}}
-{{- $project := .Values.project -}}
-{{- $environment := .Values.environment -}}
+{{- required "`namespace` not set" .Values.namespace -}}
+{{- required "`ingress.type` not set" .Values.ingress.type -}}
+{{- $namespace := .Values.namespace -}}
+{{- $ingressType := .Values.ingress.type -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $project }}-{{ $environment }}-backend-nodeport
-  namespace: {{ $project }}-{{ $environment }}
+  name: {{ $namespace }}-{{ $ingressType }}-backend-nodeport
+  namespace: {{ $namespace }}
   labels:
     app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
@@ -20,4 +20,4 @@ spec:
       name: 8080tcp1
       targetPort: {{ .Values.service.port }}
   selector:
-    appSelector: deployment-{{ $project }}-{{ $environment }}-backend
+    appSelector: deployment-{{ $namespace }}-{{ $ingressType }}-backend

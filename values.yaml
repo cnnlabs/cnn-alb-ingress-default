@@ -19,6 +19,5 @@ service:
   port: 8080
 
 ingress:
-  enabled: true
   certArn: arn:aws:acm:us-east-1:175259281135:certificate/e6b263d1-7074-4830-86d1-dd2eec1aaaa6
   path: /*

@@ -1,22 +1,21 @@
-{{- if .Values.ingress.enabled -}}
+{{- $namespace := .Values.namespace -}}
+{{- $ingressType := .Values.ingress.type -}}
 {{- $ingressPath := .Values.ingress.path -}}
-{{- $project := .Values.project -}}
-{{- $environment := .Values.environment -}}
 {{- $port := .Values.service.port -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ $project }}-{{ $environment }}-shared
-  namespace: {{ $project }}-{{ $environment }}
+  name: {{ $namespace }}-{{ $ingressType }}-shared
+  namespace: {{ $namespace }}
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ $project }}-{{ $environment }}-shared
+    alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ $namespace }}-shared
     alb.ingress.kubernetes.io/listen-ports: "[{\"HTTPS\": 443, \"HTTP\": 80}]"
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.certArn }}
-    {{- if eq $environment "prod" }}
-    alb.ingress.kubernetes.io/security-groups: news-prod-dx_external
-    {{- else }}
+    {{- if eq $ingressType "internal" }}
     alb.ingress.kubernetes.io/security-groups: news-prod-dx_internal
+    {{- else if eq $ingressType "external" }}
+    alb.ingress.kubernetes.io/security-groups: news-prod-dx_external
     {{- end}}
   labels:
     app: {{ include "alb-ingress-default.name" . }}
@@ -25,11 +24,10 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   rules:
-    - host: {{ $project }}-{{ $environment }}.cnnio.net
+    - host: {{ $namespace }}-{{ $ingressType }}.cnnio.net
       http:
         paths:
           - path: {{ $ingressPath }}
             backend:
-              serviceName: {{ $project }}-{{ $environment }}-backend-nodeport
+              serviceName: {{ $namespace }}-{{ $ingressType }}-backend-nodeport
               servicePort: {{ $port }}
-{{- end }}

@@ -1,29 +1,29 @@
-{{- $project := .Values.project -}}
-{{- $environment := .Values.environment -}}
+{{- $namespace := .Values.namespace -}}
+{{- $ingressType := .Values.ingress.type -}}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ $project }}-{{ $environment }}-backend
-  namespace: {{ $project }}-{{ $environment }}
+  name: {{ $namespace }}-{{ $ingressType }}-backend
+  namespace: {{ $namespace }}
   labels:
     app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    appSelector: deployment-{{ $project }}-{{ $environment }}-backend
+    appSelector: deployment-{{ $namespace }}-{{ $ingressType }}-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: {{ include "alb-ingress-default.name" . }}
       release: {{ .Release.Name }}
-      appSelector: deployment-{{ $project }}-{{ $environment }}-backend
+      appSelector: deployment-{{ $namespace }}-{{ $ingressType }}-backend
   template:
     metadata:
       labels:
         app: {{ include "alb-ingress-default.name" . }}
         release: {{ .Release.Name }}
-        appSelector: deployment-{{ $project }}-{{ $environment }}-backend
+        appSelector: deployment-{{ $namespace }}-{{ $ingressType }}-backend
         logzio: {{ .Values.logzio }}
     spec:
       containers:
