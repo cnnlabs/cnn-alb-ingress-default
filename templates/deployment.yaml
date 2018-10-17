@@ -1,27 +1,29 @@
+{{- $project := .Values.project -}}
+{{- $environment := .Values.environment -}}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ .Values.namespace }}-backend
-  namespace: {{ .Values.namespace }}
+  name: {{ $project }}-{{ $environment }}-backend
+  namespace: {{ $project }}-{{ $environment }}
   labels:
     app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    workload.user.cattle.io/workloadselector: deployment-{{ .Values.namespace }}-backend
+    app: deployment-{{ $project }}-{{ $environment }}-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: {{ include "alb-ingress-default.name" . }}
       release: {{ .Release.Name }}
-      workload.user.cattle.io/workloadselector: deployment-{{ .Values.namespace }}-backend
+      app: deployment-{{ $project }}-{{ $environment }}-backend
   template:
     metadata:
       labels:
         app: {{ include "alb-ingress-default.name" . }}
         release: {{ .Release.Name }}
-        workload.user.cattle.io/workloadselector: deployment-{{ .Values.namespace }}-backend
+        app: deployment-{{ $project }}-{{ $environment }}-backend
         logzio: {{ .Values.logzio }}
     spec:
       containers:
@@ -40,17 +42,3 @@ spec:
             httpGet:
               path: /
               port: http
-          resources:
-{{ toYaml .Values.resources | indent 12 }}
-    {{- with .Values.nodeSelector }}
-      nodeSelector:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.affinity }}
-      affinity:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
-      tolerations:
-{{ toYaml . | indent 8 }}
-    {{- end }}

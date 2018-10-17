@@ -1,19 +1,24 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "alb-ingress-default.fullname" . -}}
 {{- $ingressPath := .Values.ingress.path -}}
-{{- $namespace := .Values.namespace -}}
+{{- $project := .Values.project -}}
+{{- $environment := .Values.environment -}}
 {{- $port := .Values.service.port -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ .Values.namespace }}-shared
-  namespace: {{ .Values.namespace }}
+  name: {{ $project }}-{{ $environment }}-shared
+  namespace: {{ $project }}-{{ $environment }}
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/security-groups: news-prod-dx_external
-    alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ .Values.namespace }}-shared
+    alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ $project }}-{{ $environment }}-shared
     alb.ingress.kubernetes.io/listen-ports: "[{\"HTTPS\": 443, \"HTTP\": 80}]"
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.certArn }}
+    {{- if eq $environment "prod" }}
+    alb.ingress.kubernetes.io/security-groups: news-prod-dx_external
+    {{- else }}
+    alb.ingress.kubernetes.io/security-groups: news-prod-dx_internal
+    {{- end}}
   labels:
     app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
@@ -21,11 +26,11 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   rules:
-    - host: {{ .Values.namespace }}.cnnio.net
+    - host: {{ $project }}-{{ $environment }}.cnnio.net
       http:
         paths:
           - path: {{ $ingressPath }}
             backend:
-              serviceName: {{ $namespace}}-backend-nodeport
+              serviceName: {{ $project }}-{{ $environment }}-backend-nodeport
               servicePort: {{ $port }}
 {{- end }}

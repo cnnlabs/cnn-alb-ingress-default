@@ -1,8 +1,12 @@
+{{- required "`project` not set" .Values.project -}}
+{{- required "`environment` not set" .Values.environment -}}
+{{- $project := .Values.project -}}
+{{- $environment := .Values.environment -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.namespace }}-backend-nodeport
-  namespace: {{ .Values.namespace }}
+  name: {{ $project }}-{{ $environment }}-backend-nodeport
+  namespace: {{ $project }}-{{ $environment }}
   labels:
     app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
@@ -16,4 +20,4 @@ spec:
       name: 8080tcp1
       targetPort: {{ .Values.service.port }}
   selector:
-    workload.user.cattle.io/workloadselector: deployment-{{ .Values.namespace }}-backend
+    app: deployment-{{ $project }}-{{ $environment }}-backend
