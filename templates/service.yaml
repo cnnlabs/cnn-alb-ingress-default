@@ -20,4 +20,4 @@ spec:
       name: 8080tcp1
       targetPort: {{ .Values.service.port }}
   selector:
-    app: deployment-{{ $project }}-{{ $environment }}-backend
+    appSelector: deployment-{{ $project }}-{{ $environment }}-backend

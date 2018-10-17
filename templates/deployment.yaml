@@ -10,20 +10,20 @@ metadata:
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    app: deployment-{{ $project }}-{{ $environment }}-backend
+    appSelector: deployment-{{ $project }}-{{ $environment }}-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: {{ include "alb-ingress-default.name" . }}
       release: {{ .Release.Name }}
-      app: deployment-{{ $project }}-{{ $environment }}-backend
+      appSelector: deployment-{{ $project }}-{{ $environment }}-backend
   template:
     metadata:
       labels:
         app: {{ include "alb-ingress-default.name" . }}
         release: {{ .Release.Name }}
-        app: deployment-{{ $project }}-{{ $environment }}-backend
+        appSelector: deployment-{{ $project }}-{{ $environment }}-backend
         logzio: {{ .Values.logzio }}
     spec:
       containers:
