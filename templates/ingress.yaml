@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "alb-ingress-default.fullname" . -}}
+{{- $ingressPath := .Values.ingress.path -}}
 {{- $project := .Values.project -}}
 {{- $environment := .Values.environment -}}
 {{- $port := .Values.service.port -}}
