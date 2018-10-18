@@ -28,9 +28,5 @@ If release name contains chart name it will be used as a full name.
 Create chart name and version as used by the chart label.
 */}}
 {{- define "alb-ingress-default.chart" -}}
-{{- if .Values.ingress.name -}}
-{{- printf "%s-%s" "alb-ingress-named" .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
 {{- end -}}

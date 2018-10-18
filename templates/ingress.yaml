@@ -1,15 +1,15 @@
 {{- $fallbackName := printf "%s-%s-shared" .Values.namespace .Values.ingress.type -}}
 {{- $fallbackSelector := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
-{{- $ingressName := .Values.ingress.name | default $fallbackName -}}
-{{- $ingressSelector := .Values.ingress.name | default $fallbackSelector -}}
+{{- $appName := .Values.app.name | default $fallbackName -}}
+{{- $appSelector := .Values.app.name | default $fallbackSelector -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ $ingressName }}
+  name: {{ $appName }}
   namespace: {{ .Values.namespace }}
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ $ingressName }}
+    alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ $appName }}
     alb.ingress.kubernetes.io/listen-ports: "[{\"HTTPS\": 443, \"HTTP\": 80}]"
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.certArn }}
     {{- if eq .Values.ingress.type "internal" }}
@@ -18,16 +18,16 @@ metadata:
     alb.ingress.kubernetes.io/security-groups: news-prod-dx_external
     {{- end}}
   labels:
-    app: {{ .Values.ingress.name | default (include "alb-ingress-default.name" .)  }}
+    app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   rules:
-    - host: {{ $ingressName }}.cnnio.net
+    - host: {{ $appName }}.cnnio.net
       http:
         paths:
           - path: {{ .Values.ingress.path }}
             backend:
-              serviceName: {{ $ingressSelector }}-backend-nodeport
+              serviceName: {{ $appSelector }}-backend-nodeport
               servicePort: {{ .Values.service.port }}

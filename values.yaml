@@ -4,6 +4,8 @@
 
 replicaCount: 1
 
+app: {}
+
 image:
   repository: quay.io/turner/simple-backend
   tag: "1.0"

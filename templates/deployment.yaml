@@ -1,35 +1,35 @@
-{{- $fallbackName := printf "%s-%" .Values.namespace .Values.ingress.type -}}
+{{- $fallbackName := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
 {{- $fallbackSelector := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
-{{- $ingressName := .Values.ingress.name | default $fallbackName -}}
-{{- $ingressSelector := .Values.ingress.name | default $fallbackSelector -}}
+{{- $appName := .Values.app.name | default $fallbackName -}}
+{{- $appSelector := .Values.app.name | default $fallbackSelector -}}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ $ingressName }}-backend
+  name: {{ $appName }}-backend
   namespace: {{ .Values.namespace }}
   labels:
-    app: {{ .Values.ingress.name | default (include "alb-ingress-default.name" .)  }}
+    app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    appSelector: {{ $ingressSelector }}
+    appSelector: deployment-{{ $appSelector }}-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.ingress.name | default (include "alb-ingress-default.name" .)  }}
+      app: {{ include "alb-ingress-default.name" . }}
       release: {{ .Release.Name }}
-      appSelector: {{ $ingressSelector }}
+      appSelector: deployment-{{ $appSelector }}-backend
   template:
     metadata:
       labels:
-        app: {{ .Values.ingress.name | default (include "alb-ingress-default.name" .)  }}
+        app: {{ include "alb-ingress-default.name" . }}
         release: {{ .Release.Name }}
-        appSelector: {{ $ingressSelector }}
+        appSelector: deployment-{{ $appSelector }}-backend
         logzio: {{ .Values.logzio }}
     spec:
       containers:
-        - name: {{ $ingressName }}-backend
+        - name: {{ $appName }}-backend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:

@@ -1,16 +1,14 @@
-{{- required "`namespace` not set" .Values.namespace -}}
-{{- required "`ingress.type` not set" .Values.ingress.type -}}
-{{- $fallbackName := printf "%s-%s-shared" .Values.namespace .Values.ingress.type -}}
+{{- $fallbackName := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
 {{- $fallbackSelector := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
-{{- $ingressName := .Values.ingress.name | default $fallbackName -}}
-{{- $ingressSelector := .Values.ingress.name | default $fallbackSelector -}}
+{{- $appName := .Values.app.name | default $fallbackName -}}
+{{- $appSelector := .Values.app.name | default $fallbackSelector -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $ingressName }}-backend-nodeport
+  name: {{ $appName }}-backend-nodeport
   namespace: {{ .Values.namespace }}
   labels:
-    app: {{ .Values.ingress.name | default (include "alb-ingress-default.name" .)  }}
+    app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -22,4 +20,4 @@ spec:
       name: 8080tcp1
       targetPort: {{ .Values.service.port }}
   selector:
-    appSelector: {{ $ingressSelector }}
+    appSelector: deployment-{{ $appSelector }}-backend
