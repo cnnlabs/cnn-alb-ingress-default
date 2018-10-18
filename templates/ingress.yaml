@@ -1,4 +1,4 @@
-{{- $albIngressName := .Values.app.name | default "default" }}
+{{- $albIngressName := .Values.app.name | default "default" -}}
 {{- $fallbackName := printf "%s-%s-shared" .Values.namespace .Values.ingress.type -}}
 {{- $fallbackSelector := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
 {{- $appName := .Values.app.name | default $fallbackName -}}
