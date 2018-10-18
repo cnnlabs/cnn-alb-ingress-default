@@ -1,13 +1,13 @@
 {{- $albIngressName := .Values.app.name | default "default" -}}
-{{- $fallbackName := printf "%s-%s-shared" .Values.namespace .Values.ingress.type -}}
-{{- $fallbackSelector := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
+{{- $fallbackName := printf "%s-%s-shared" .Release.Namespace .Values.ingress.type -}}
+{{- $fallbackSelector := printf "%s-%s" .Release.Namespace .Values.ingress.type -}}
 {{- $appName := .Values.app.name | default $fallbackName -}}
 {{- $appSelector := .Values.app.name | default $fallbackSelector -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $appName }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ $appName }}
