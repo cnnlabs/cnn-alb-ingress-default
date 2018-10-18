@@ -1,3 +1,4 @@
+{{- $albIngressName := .Values.app.name | default "default" }}
 {{- $fallbackName := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
 {{- $fallbackSelector := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
 {{- $appName := .Values.app.name | default $fallbackName -}}
@@ -12,6 +13,7 @@ metadata:
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    albIngressName: {{ $albIngressName }}
 spec:
   type: {{ .Values.service.type }}
   ports:

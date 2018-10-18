@@ -1,3 +1,4 @@
+{{- $albIngressName := .Values.app.name | default "default" }}
 {{- $fallbackName := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
 {{- $fallbackSelector := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
 {{- $appName := .Values.app.name | default $fallbackName -}}
@@ -13,6 +14,7 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
     appSelector: deployment-{{ $appSelector }}-backend
+    albIngressName: {{ $albIngressName }}
 spec:
   replicas: 1
   selector:
@@ -27,6 +29,7 @@ spec:
         release: {{ .Release.Name }}
         appSelector: deployment-{{ $appSelector }}-backend
         logzio: {{ .Values.logzio }}
+        albIngressName: {{ $albIngressName }}
     spec:
       containers:
         - name: {{ $appName }}-backend
