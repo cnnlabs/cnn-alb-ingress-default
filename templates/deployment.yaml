@@ -1,33 +1,35 @@
-{{- $namespace := .Values.namespace -}}
-{{- $ingressType := .Values.ingress.type -}}
+{{- $fallbackName := printf "%s-%" .Values.namespace .Values.ingress.type -}}
+{{- $fallbackSelector := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
+{{- $ingressName := .Values.ingress.name | default $fallbackName -}}
+{{- $ingressSelector := .Values.ingress.name | default $fallbackSelector -}}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ $namespace }}-{{ $ingressType }}-backend
-  namespace: {{ $namespace }}
+  name: {{ $ingressName }}-backend
+  namespace: {{ .Values.namespace }}
   labels:
-    app: {{ include "alb-ingress-default.name" . }}
+    app: {{ .Values.ingress.name | default (include "alb-ingress-default.name" .)  }}
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    appSelector: deployment-{{ $namespace }}-{{ $ingressType }}-backend
+    appSelector: {{ $ingressSelector }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "alb-ingress-default.name" . }}
+      app: {{ .Values.ingress.name | default (include "alb-ingress-default.name" .)  }}
       release: {{ .Release.Name }}
-      appSelector: deployment-{{ $namespace }}-{{ $ingressType }}-backend
+      appSelector: {{ $ingressSelector }}
   template:
     metadata:
       labels:
-        app: {{ include "alb-ingress-default.name" . }}
+        app: {{ .Values.ingress.name | default (include "alb-ingress-default.name" .)  }}
         release: {{ .Release.Name }}
-        appSelector: deployment-{{ $namespace }}-{{ $ingressType }}-backend
+        appSelector: {{ $ingressSelector }}
         logzio: {{ .Values.logzio }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ $ingressName }}-backend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:

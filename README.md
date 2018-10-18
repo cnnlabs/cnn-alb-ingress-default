@@ -11,3 +11,5 @@ Example:
  ➜ helm install  . --set namespace=whiteboard-nonprod --set ingress.type=internal
 ```
 This will create an internally available load balancer in the namespace `whiteboard-nonprod` with the host `whiteboard-nonprod-internal.cnnio.net`.
+
+You can also override the default name generation with the additional flag `--set ingress.name=<your name here>`.

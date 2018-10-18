@@ -1,33 +1,33 @@
-{{- $namespace := .Values.namespace -}}
-{{- $ingressType := .Values.ingress.type -}}
-{{- $ingressPath := .Values.ingress.path -}}
-{{- $port := .Values.service.port -}}
+{{- $fallbackName := printf "%s-%s-shared" .Values.namespace .Values.ingress.type -}}
+{{- $fallbackSelector := printf "%s-%s" .Values.namespace .Values.ingress.type -}}
+{{- $ingressName := .Values.ingress.name | default $fallbackName -}}
+{{- $ingressSelector := .Values.ingress.name | default $fallbackSelector -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ $namespace }}-{{ $ingressType }}-shared
-  namespace: {{ $namespace }}
+  name: {{ $ingressName }}
+  namespace: {{ .Values.namespace }}
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ $namespace }}-shared
+    alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ $ingressName }}
     alb.ingress.kubernetes.io/listen-ports: "[{\"HTTPS\": 443, \"HTTP\": 80}]"
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.certArn }}
-    {{- if eq $ingressType "internal" }}
+    {{- if eq .Values.ingress.type "internal" }}
     alb.ingress.kubernetes.io/security-groups: news-prod-dx_internal
-    {{- else if eq $ingressType "external" }}
+    {{- else if eq .Values.ingress.type "external" }}
     alb.ingress.kubernetes.io/security-groups: news-prod-dx_external
     {{- end}}
   labels:
-    app: {{ include "alb-ingress-default.name" . }}
+    app: {{ .Values.ingress.name | default (include "alb-ingress-default.name" .)  }}
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   rules:
-    - host: {{ $namespace }}-{{ $ingressType }}.cnnio.net
+    - host: {{ $ingressName }}.cnnio.net
       http:
         paths:
-          - path: {{ $ingressPath }}
+          - path: {{ .Values.ingress.path }}
             backend:
-              serviceName: {{ $namespace }}-{{ $ingressType }}-backend-nodeport
-              servicePort: {{ $port }}
+              serviceName: {{ $ingressSelector }}-backend-nodeport
+              servicePort: {{ .Values.service.port }}
