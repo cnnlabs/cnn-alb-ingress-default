@@ -12,9 +12,9 @@ Example:
 ```
 This will create an internally available load balancer in the namespace `whiteboard-nonprod` with the host `whiteboard-nonprod-internal.cnnio.net`.
 
-## Initilizing an ALB for dedicated use
+## Initilizing an ALB and deployment for dedicated use
 
-The syntax is exactly the same, but you'll need to add two additional flags: `--set deployment.name=<deployment name here>` and `--set deploymet.port=<deployment port>.
+The syntax is exactly the same, but you'll need to add two additional flags: `--set deployment.name=<deployment name here>` and `--set deploymet.port=<deployment port>`. You can also use `--set image.url=<image url>` to start with your own image.
 
 Example:
 ```
