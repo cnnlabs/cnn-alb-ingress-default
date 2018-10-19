@@ -1,3 +1,4 @@
+{{- if .Values.deployment.create -}}
 {{- $albIngressName := .Values.deployment.name | default "default" -}}
 {{- $fallbackName := printf "%s-%s-backend" .Release.Namespace .Values.ingress.type -}}
 {{- $fallbackSelector := printf "%s-%s" .Release.Namespace .Values.ingress.type -}}
@@ -24,3 +25,4 @@ spec:
       targetPort: {{ $port }}
   selector:
     appSelector: deployment-{{ $appSelector }}
+{{- end }}
