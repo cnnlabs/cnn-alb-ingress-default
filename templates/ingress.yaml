@@ -1,8 +1,9 @@
-{{- $albIngressName := .Values.app.name | default "default" -}}
+{{- $albIngressName := .Values.deployment.name | default "default" -}}
 {{- $fallbackName := printf "%s-%s-shared" .Release.Namespace .Values.ingress.type -}}
-{{- $fallbackSelector := printf "%s-%s" .Release.Namespace .Values.ingress.type -}}
-{{- $appName := .Values.app.name | default $fallbackName -}}
-{{- $appSelector := .Values.app.name | default $fallbackSelector -}}
+{{- $fallbackSelector := printf "%s-%s-backend" .Release.Namespace .Values.ingress.type -}}
+{{- $appName := .Values.deployment.name | default $fallbackName -}}
+{{- $appSelector := .Values.deployment.name | default $fallbackSelector -}}
+{{- $port := .Values.deployment.port | default 8080 -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -31,5 +32,5 @@ spec:
         paths:
           - path: {{ .Values.ingress.path }}
             backend:
-              serviceName: {{ $appSelector }}-backend-nodeport
-              servicePort: {{ .Values.service.port }}
+              serviceName: {{ $appSelector }}-nodeport
+              servicePort: {{ $port }}

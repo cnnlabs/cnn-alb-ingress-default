@@ -1,19 +1,20 @@
-{{- $albIngressName := .Values.app.name | default "default" -}}
+{{- $albIngressName := .Values.deployment.name | default "default" -}}
 {{- $fallbackName := printf "%s-%s" .Release.Namespace .Values.ingress.type -}}
 {{- $fallbackSelector := printf "%s-%s" .Release.Namespace .Values.ingress.type -}}
-{{- $appName := .Values.app.name | default $fallbackName -}}
-{{- $appSelector := .Values.app.name | default $fallbackSelector -}}
+{{- $appName := .Values.deployment.name | default (printf "%s-backend" $fallbackName) -}}
+{{- $appSelector := .Values.deployment.name | default $fallbackSelector -}}
+{{- $port := .Values.deployment.port | default 8080 }}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ $appName }}-backend
+  name: {{ $appName }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    appSelector: deployment-{{ $appSelector }}-backend
+    appSelector: deployment-{{ $appSelector }}
     albIngressName: {{ $albIngressName }}
 spec:
   replicas: 1
@@ -21,23 +22,31 @@ spec:
     matchLabels:
       app: {{ include "alb-ingress-default.name" . }}
       release: {{ .Release.Name }}
-      appSelector: deployment-{{ $appSelector }}-backend
+      appSelector: deployment-{{ $appSelector }}
   template:
     metadata:
       labels:
         app: {{ include "alb-ingress-default.name" . }}
         release: {{ .Release.Name }}
-        appSelector: deployment-{{ $appSelector }}-backend
+        appSelector: deployment-{{ $appSelector }}
         logzio: {{ .Values.logzio }}
         albIngressName: {{ $albIngressName }}
+      {{- if .Values.deployment.name }}
+      annotations:
+        production_monitoring: "true"
+        kb_article: ""
+      {{- end }}
     spec:
       containers:
-        - name: {{ $appName }}-backend
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        - name: {{ $appName }}
+          image: "{{ .Values.image.url }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: PORT
+            value: {{ $port | quote }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: {{ $port }}
               protocol: TCP
           livenessProbe:
             httpGet:

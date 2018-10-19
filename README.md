@@ -14,9 +14,9 @@ This will create an internally available load balancer in the namespace `whitebo
 
 ## Initilizing an ALB for dedicated use
 
-The syntax is exactly the same, but you'll need to add one additional flag: `--set app.name=<app name here>`.
+The syntax is exactly the same, but you'll need to add two additional flags: `--set deployment.name=<deployment name here>` and `--set deploymet.port=<deployment port>.
 
 Example:
 ```
- ➜ helm install . --namespace=web-product-prod --set ingress.type=internal --set app.name=awesome-web-app
+ ➜ helm install . --namespace=web-product-prod --set ingress.type=internal --set deployment.name=awesome-web-app --set deployment.port=80
 ```
