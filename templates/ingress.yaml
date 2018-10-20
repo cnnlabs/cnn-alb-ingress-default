@@ -14,15 +14,15 @@ metadata:
   {{- end }}
   namespace: {{ .Release.Namespace }}
   annotations:
+    {{- if eq .Values.ingress.type "internal" }}
+    alb.ingress.kubernetes.io/scheme: internal
+    {{- else if eq .Values.ingress.type "external" }}
     alb.ingress.kubernetes.io/scheme: internet-facing
+    {{- end}}
     alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=alb-logs-news-prod-dx,access_logs.s3.prefix={{ $appName }}
     alb.ingress.kubernetes.io/listen-ports: "[{\"HTTPS\": 443, \"HTTP\": 80}]"
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.certArn }}
-    {{- if eq .Values.ingress.type "internal" }}
-    alb.ingress.kubernetes.io/security-groups: news-prod-dx_internal
-    {{- else if eq .Values.ingress.type "external" }}
-    alb.ingress.kubernetes.io/security-groups: news-prod-dx_external
-    {{- end}}
+    alb.ingress.kubernetes.io/security-groups: news-prod-dx
   labels:
     app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
