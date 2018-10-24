@@ -13,6 +13,10 @@ image:
 
 logzio: stderr
 
+monitoring:
+  enabled: "true"
+  kb_article: ""
+
 nameOverride: ""
 fullnameOverride: ""
 
@@ -22,5 +26,5 @@ service:
 
 ingress:
   name: ""
-  certArn: arn:aws:acm:us-east-1:175259281135:certificate/e6b263d1-7074-4830-86d1-dd2eec1aaaa6
+  certArn: arn:aws:acm:us-east-1:175259281135:certificate/4455f959-06a7-4177-97b9-ec87c089e58b
   path: /*

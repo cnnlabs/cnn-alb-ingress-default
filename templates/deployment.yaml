@@ -34,8 +34,8 @@ spec:
         albIngressName: {{ $albIngressName }}
       {{- if .Values.deployment.name }}
       annotations:
-        production_monitoring: "true"
-        kb_article: ""
+        production_monitoring: "{{ .Values.monitoring.enabled }}"
+        kb_article: {{ .Values.monitoring.kb_article }}
       {{- end }}
     spec:
       containers:
