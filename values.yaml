@@ -25,6 +25,7 @@ service:
   port: 8080
 
 ingress:
+  domain: cnnio.net
   name: ""
   certArn: arn:aws:acm:us-east-1:175259281135:certificate/4455f959-06a7-4177-97b9-ec87c089e58b
   path: /*
