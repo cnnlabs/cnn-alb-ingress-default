@@ -25,6 +25,7 @@ service:
   port: 8080
 
 ingress:
+  cluster: news-prod-dx
   domain: cnnio.net
   bucketName: alb-logs-news-prod-dx
   securityGroup: news-prod-dx

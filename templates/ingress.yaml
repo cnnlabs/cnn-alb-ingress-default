@@ -1,5 +1,5 @@
 {{- $albIngressName := .Values.deployment.name | default "default" -}}
-{{- $fallbackName := printf "%s-%s-shared" .Release.Namespace .Values.ingress.type -}}
+{{- $fallbackName := printf "%s-%s-shared-%s" .Release.Namespace .Values.ingress.type .Values.ingress.cluster -}}
 {{- $fallbackSelector := printf "%s-%s-backend" .Release.Namespace .Values.ingress.type -}}
 {{- $appName := .Values.deployment.name | default $fallbackName -}}
 {{- $appSelector := .Values.deployment.name | default $fallbackSelector -}}
