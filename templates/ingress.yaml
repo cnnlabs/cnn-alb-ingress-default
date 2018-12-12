@@ -17,7 +17,7 @@ metadata:
     kubernetes.io/ingress.class: alb
     {{- if eq .Values.ingress.type "internal" }}
     alb.ingress.kubernetes.io/scheme: internal
-    {{- else if eq .Values.ingress.type "external" }}
+    {{- else  }}
     alb.ingress.kubernetes.io/scheme: internet-facing
     {{- end}}
     alb.ingress.kubernetes.io/attributes: access_logs.s3.enabled=true,access_logs.s3.bucket={{ .Values.ingress.bucketName }},access_logs.s3.prefix={{ $appName }}
