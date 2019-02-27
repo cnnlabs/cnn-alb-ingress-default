@@ -1,22 +1,41 @@
 ## What is this for?
 
-This chart is meant to stub out `deployment`, `service` and `ingress` objects in a specific namespace. It will automatically create the `ingress` object with the needed annotations for use with the `alb-ingress` controller. Additionally, you need to set the `ingress.type` to either `internal` or `external` to decide if the ALB will be available only inside the Turner network or on the public internet.
+This chart is meant to stub out `deployment`, `service` and `ingress` objects in a specific
+namespace. It will automatically create the `ingress` object with the needed annotations for use
+with the `alb-ingress` controller. Additionally, you need to set the `ingress.type` to either
+`internal` or `external` to decide if the ALB will be available only inside the Turner network or
+on the public internet.
 
 ## Usage
 
-You _must_ define `namespace` and `ingress.type` at runtime, as there are no assigned defaults.
+Example:
+```
+ ➜ helm install . \
+    --name=web-product-prod-private-shared-eks-prime \
+    --namespace=web-product-prod \
+    --set ingress.cluser=eks-prime \
+    --set ingress.domain=cnnio.net \
+    --set ingress.securityGroup=cnn-eks-prime-private \
+    --set ingress.bucketName=alb-logs-cnn-eks-prime \
+    --set ingress.type=private
+```
+This will create an internally available load balancer in the namespace `web-product-prod` with
+the host `web-product-prod-private-shared-eks-prime.cnnio.net`.
+
+## Initilizing an ALB with a different name
+
+The syntax is exactly the same, but you'll need to add one additional flag:
+`--set overrideName=<app name here>`. 
 
 Example:
 ```
- ➜ helm install  . --namespace=whiteboard-nonprod --set ingress.type=internal
-```
-This will create an internally available load balancer in the namespace `whiteboard-nonprod` with the host `whiteboard-nonprod-internal.cnnio.net`.
-
-## Initilizing an ALB and deployment for dedicated use
-
-The syntax is exactly the same, but you'll need to add two additional flags: `--set deployment.name=<deployment name here>` and `--set deploymet.port=<deployment port>`. You can also use `--set image.url=<image url>` to start with your own image.
-
-Example:
-```
- ➜ helm install . --namespace=web-product-prod --set ingress.type=internal --set deployment.name=awesome-web-app --set deployment.port=80
+ ➜ helm install . \
+    --name=web-product-prod-private-shared-eks-prime \
+    --namespace=web-product-prod \
+    --set ingress.cluser=eks-prime \
+    --set ingress.domain=cnnio.net \
+    --set ingress.securityGroup=cnn-eks-prime-private \
+    --set ingress.bucketName=alb-logs-cnn-eks-prime \
+    --set ingress.type=private \
+    --set overrideName=awesome-web-app
 ```

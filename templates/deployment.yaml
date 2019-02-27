@@ -1,9 +1,6 @@
 {{- if .Values.deployment.create -}}
-{{- $albIngressName := .Values.deployment.name | default "default" -}}
 {{- $fallbackName := printf "%s-%s-backend" .Release.Namespace .Values.ingress.type -}}
-{{- $fallbackSelector := printf "%s-%s-backend" .Release.Namespace .Values.ingress.type -}}
-{{- $appName := .Values.deployment.name | default $fallbackName -}}
-{{- $appSelector := .Values.deployment.name | default $fallbackSelector -}}
+{{- $appName := .Values.overrideName | default $fallbackName -}}
 {{- $port := .Values.deployment.port | default 8080 }}
 apiVersion: apps/v1beta2
 kind: Deployment
@@ -15,23 +12,23 @@ metadata:
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    appSelector: deployment-{{ $appSelector }}
-    albIngressName: {{ $albIngressName }}
+    appSelector: deployment-{{ $appName }}
+    albIngressName: "default"
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: {{ include "alb-ingress-default.name" . }}
       release: {{ .Release.Name }}
-      appSelector: deployment-{{ $appSelector }}
+      appSelector: deployment-{{ $appName }}
   template:
     metadata:
       labels:
         app: {{ include "alb-ingress-default.name" . }}
         release: {{ .Release.Name }}
-        appSelector: deployment-{{ $appSelector }}
+        appSelector: deployment-{{ $appName }}
         logzio: {{ .Values.logzio }}
-        albIngressName: {{ $albIngressName }}
+        albIngressName: "default"
       {{- if .Values.deployment.name }}
       annotations:
         production_monitoring: "{{ .Values.monitoring.enabled }}"

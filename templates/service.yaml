@@ -1,9 +1,6 @@
 {{- if .Values.deployment.create -}}
-{{- $albIngressName := .Values.deployment.name | default "default" -}}
 {{- $fallbackName := printf "%s-%s-backend" .Release.Namespace .Values.ingress.type -}}
-{{- $fallbackSelector := printf "%s-%s-backend" .Release.Namespace .Values.ingress.type -}}
-{{- $appName := .Values.deployment.name | default $fallbackName -}}
-{{- $appSelector := .Values.deployment.name | default $fallbackSelector -}}
+{{- $appName := .Values.overrideName | default $fallbackName -}}
 {{- $port := .Values.deployment.port | default 8080 -}}
 apiVersion: v1
 kind: Service
@@ -15,7 +12,7 @@ metadata:
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    albIngressName: {{ $albIngressName }}
+    albIngressName: "default"
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -24,5 +21,5 @@ spec:
       name: port
       targetPort: {{ $port }}
   selector:
-    appSelector: deployment-{{ $appSelector }}
+    appSelector: deployment-{{ $appName }}
 {{- end }}
