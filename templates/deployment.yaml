@@ -1,5 +1,5 @@
 {{- if .Values.deployment.create -}}
-{{- $fallbackName := printf "%s-%s-backend" .Release.Namespace .Values.ingress.type -}}
+{{- $fallbackName := printf "%s-%s-shared-%s" .Release.Namespace .Values.ingress.type .Values.ingress.cluster -}}
 {{- $appName := .Values.overrideName | default $fallbackName -}}
 {{- $port := .Values.deployment.port | default 8080 }}
 apiVersion: apps/v1beta2
