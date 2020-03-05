@@ -31,5 +31,5 @@ spec:
         paths:
           - path: {{ .Values.ingress.path }}
             backend:
-              serviceName: {{ $appName }}-nodeport
+              serviceName: {{ $appName }}-np
               servicePort: {{ $port }}

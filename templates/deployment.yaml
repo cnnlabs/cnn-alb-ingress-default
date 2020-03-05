@@ -12,7 +12,7 @@ metadata:
     chart: {{ include "alb-ingress-default.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-    appSelector: deployment-{{ $appName }}
+    appSelector: dep-{{ $appName }}
     albIngressName: "default"
 spec:
   replicas: 1
@@ -20,13 +20,13 @@ spec:
     matchLabels:
       app: {{ include "alb-ingress-default.name" . }}
       release: {{ .Release.Name }}
-      appSelector: deployment-{{ $appName }}
+      appSelector: dep-{{ $appName }}
   template:
     metadata:
       labels:
         app: {{ include "alb-ingress-default.name" . }}
         release: {{ .Release.Name }}
-        appSelector: deployment-{{ $appName }}
+        appSelector: dep-{{ $appName }}
         logzio: {{ .Values.logzio }}
         albIngressName: "default"
       {{- if .Values.deployment.name }}
