@@ -8,7 +8,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   annotations:
     kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/target-type: instance
     {{- if eq .Values.ingress.type "internal" }}
     alb.ingress.kubernetes.io/scheme: internal
     {{- else  }}
