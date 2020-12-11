@@ -2,7 +2,7 @@
 {{- $fallbackName := printf "%s-%s-shared-%s" .Release.Namespace .Values.ingress.type .Values.ingress.cluster -}}
 {{- $appName := .Values.overrideName | default $fallbackName -}}
 {{- $port := .Values.deployment.port | default 8080 }}
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ $appName }}
