@@ -7,6 +7,10 @@ kind: Service
 metadata:
   name: {{ $appName }}-np
   namespace: {{ .Release.Namespace }}
+  {{- if eq .Values.service.type "LoadBalancer" }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  {{- end }}
   labels:
     app: {{ include "alb-ingress-default.name" . }}
     chart: {{ include "alb-ingress-default.chart" . }}
